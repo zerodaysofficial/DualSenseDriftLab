@@ -1,8 +1,4 @@
-# DualSense Drift Lab
-
-[English](README_EN.md) · [Italiano](README_IT.md)
-
-Windows x64 — beta 3
+# DualSense Drift Lab — Windows x64 — beta 3
 
 Made by **zer0day**. DualSense calibration commands and report layouts reference **dualshock-tools**, by **the_al**, under the MIT License. The full attribution and license are included in `THIRD_PARTY_NOTICES.md`.
 
