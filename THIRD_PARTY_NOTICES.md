@@ -2,7 +2,7 @@
 
 Applicazione Windows: **Made by zer0day**. / Windows application: **Made by zer0day**.
 
-Protocol reference: **dualshock-tools · the_al**. The language chooser, main window and Credits dialog display this attribution. Calibration commands and report layouts derive from the reference below; the C# application and diagnostic implementation were built for this project.
+Protocol reference: **[dualshock-tools](https://github.com/dualshock-tools/dualshock-tools.github.io) · the_al**. The language chooser, main window and Credits dialog display this attribution; the Credits dialog includes a clickable link to the original repository. Calibration commands and report layouts derive from the reference below; the C# application and diagnostic implementation were built for this project.
 
 Comandi di calibrazione e layout dei report derivati dal progetto https://github.com/dualshock-tools/dualshock-tools.github.io, revisione fbbe58d55636ee9b81b71f9aaebba3fd8956a105. Algoritmo e app C# sono implementazioni indipendenti.
 

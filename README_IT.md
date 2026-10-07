@@ -4,7 +4,7 @@
 
 Programma nativo in inglese e italiano per DualSense Sony **standard** collegato con cavo USB dati. Legge i report reali, guida il test del rientro dello stick sinistro, analizza tutti e quattro gli assi e tenta una calibrazione temporanea. Offre salvataggio nel controller, Restore da backup e riavvio. Non usa un controller virtuale o un filtro che modifica soltanto la grafica.
 
-**Made by zer0day**. Protocollo di calibrazione: **dualshock-tools · the_al**, licenza MIT e attribuzione incluse in `THIRD_PARTY_NOTICES.md`.
+**Made by zer0day**. Protocollo di calibrazione: **[dualshock-tools](https://github.com/dualshock-tools/dualshock-tools.github.io) · the_al**, licenza MIT e attribuzione incluse in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 **Stato:** compilato per Windows x64, con test software su dati sintetici e trasporto controllato. Non è stato avviato su Windows né provato su un DualSense fisico in questo ambiente. Riconoscimento USB, interfaccia, compatibilità firmware, salvataggio effettivo e comportamento su PS5 richiedono le prove indicate in `hardware-checklist.md`. La calibrazione può correggere uno scostamento del centro; non ripara un sensore usurato o un segnale che continua a cambiare.
 
@@ -48,6 +48,14 @@ I report USB rappresentano ogni asse con 256 valori: un passo è circa 0,78% e i
 Finestre da 1 secondo, almeno 200 campioni per osservazione da 8 secondi e nessuna lacuna oltre 250 ms. Il controllo della corsa richiede almeno ±95% per tutti e quattro gli assi e rientro entro la nuova tolleranza del centro. Il salvataggio richiede il test completo dopo la calibrazione senza difetti rilevati; se tremolii o picchi restano, ripristina la calibrazione precedente e disabilita il salvataggio. La correzione non filtra né nasconde il segnale. La regolazione con feedback cerca il centro tra valori temporanei entro ±500 unità dei parametri originali, con al massimo 12 scritture per asse: durante la ricerca lo scostamento può aumentare brevemente. Se non trova un centro stabile ripristina i parametri precedenti.
 
 Un test superato riguarda i periodi osservati; non esclude un difetto intermittente successivo o un picco sotto soglia. Non è una riparazione meccanica e non garantisce di eliminare ogni difetto.
+
+## Crediti
+
+**Made by zer0day** — Applicazione Windows, selezione della lingua, test guidati degli stick e diagnostica del drift sviluppati per DualSense Drift Lab.
+
+- **[dualshock-tools](https://github.com/dualshock-tools/dualshock-tools.github.io) · the_al** — Progetto originale usato come riferimento per i comandi di calibrazione DualSense e il layout dei report HID. Revisione di riferimento: `fbbe58d55636ee9b81b71f9aaebba3fd8956a105`. Dettagli tecnici: [riferimento del protocollo](docs/protocol-reference.md).
+- **Attribuzione MIT originale** — `Copyright (c) 2024 the_al`. L'avviso di copyright originale e il testo integrale della licenza MIT sono conservati in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- **Microsoft .NET e Windows Forms** — Componenti runtime inclusi nel pacchetto Windows; licenze e attribuzioni sono nella sua cartella `licenses`.
 
 ## Compilare i sorgenti
 

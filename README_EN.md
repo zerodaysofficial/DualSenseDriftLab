@@ -2,7 +2,7 @@
 
 **Download:** [Windows package and source archive — beta 3](https://github.com/zerodaysofficial/DualSenseDriftLab/releases/tag/v0.1.0-beta.3). Under **Assets**, choose `DualSenseDriftLab_Windows.zip` to run the application.
 
-Made by **zer0day**. DualSense calibration commands and report layouts reference **dualshock-tools**, by **the_al**, under the MIT License. The full attribution and license are included in `THIRD_PARTY_NOTICES.md`.
+Made by **zer0day**. DualSense calibration commands and report layouts reference **[dualshock-tools](https://github.com/dualshock-tools/dualshock-tools.github.io)**, by **the_al**, under the MIT License. The full attribution and license are included in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 A native Windows application for a standard Sony DualSense connected through a USB data cable. It reads real reports, guides a left-stick return test, analyzes all four axes and attempts temporary calibration. It supports saving to the controller, restoring a backup and rebooting. It uses neither a virtual controller nor a display-only correction filter.
 
@@ -39,6 +39,14 @@ These are project thresholds, not Sony specifications: accepted center about ±0
 USB axes have 256 values, about 0.78% per step. The center lies between two codes at ±0.39%; ordinary alternation between those centered codes is tolerated. Exact zero cannot be represented in every individual sample. Thresholds include a small numerical tolerance.
 
 An 8-second observation requires at least 200 samples, with no gap longer than 250 ms. Range verification requires at least ±95% on all four axes and a centered return. Center adjustment searches within ±500 parameter units of the original values, with at most 12 writes per axis. Probes may temporarily increase the offset. Failed convergence or post-calibration verification restores the previous temporary parameters and disables saving. A passing observation does not exclude a later intermittent or below-threshold fault.
+
+## Credits
+
+**Made by zer0day** — Windows application, language selection, guided stick tests and drift diagnostics developed for DualSense Drift Lab.
+
+- **[dualshock-tools](https://github.com/dualshock-tools/dualshock-tools.github.io) · the_al** — Original project used as the reference for DualSense calibration commands and HID report layouts. Reference revision: `fbbe58d55636ee9b81b71f9aaebba3fd8956a105`. Technical details: [protocol reference](docs/protocol-reference.md).
+- **Original MIT attribution** — `Copyright (c) 2024 the_al`. The original copyright notice and full MIT license are preserved in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- **Microsoft .NET and Windows Forms** — Runtime components included with the Windows package; their licenses and notices are in its `licenses` folder.
 
 ## Build
 
