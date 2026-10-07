@@ -4,6 +4,8 @@
 
 Windows x64 — beta 3
 
+**Download:** [Windows package and source archive — beta 3](https://github.com/zerodaysofficial/DualSenseDriftLab/releases/tag/v0.1.0-beta.3). Under **Assets**, choose `DualSenseDriftLab_Windows.zip` to run the application.
+
 Made by **zer0day**. DualSense calibration commands and report layouts reference **dualshock-tools**, by **the_al**, under the MIT License. The full attribution and license are included in `THIRD_PARTY_NOTICES.md`.
 
 A native Windows application for a standard Sony DualSense connected through a USB data cable. It reads real reports, guides a left-stick return test, analyzes all four axes and attempts temporary calibration. It supports saving to the controller, restoring a backup and rebooting. It uses neither a virtual controller nor a display-only correction filter.

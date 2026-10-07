@@ -1,5 +1,7 @@
 # DualSense Drift Lab — Windows x64 — beta 3
 
+**Download:** [Pacchetto Windows e archivio sorgenti — beta 3](https://github.com/zerodaysofficial/DualSenseDriftLab/releases/tag/v0.1.0-beta.3). In **Assets**, scegli `DualSenseDriftLab_Windows.zip` per avviare il programma.
+
 Programma nativo in inglese e italiano per DualSense Sony **standard** collegato con cavo USB dati. Legge i report reali, guida il test del rientro dello stick sinistro, analizza tutti e quattro gli assi e tenta una calibrazione temporanea. Offre salvataggio nel controller, Restore da backup e riavvio. Non usa un controller virtuale o un filtro che modifica soltanto la grafica.
 
 **Made by zer0day**. Protocollo di calibrazione: **dualshock-tools · the_al**, licenza MIT e attribuzione incluse in `THIRD_PARTY_NOTICES.md`.
