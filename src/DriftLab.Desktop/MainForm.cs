@@ -15,7 +15,7 @@ public sealed class MainForm:Form
   live=new(Confirm);live.Disconnected+=()=>{session?.Invalidate();Ui(()=>{connection.Text=AppText.T("Controller scollegato");RefreshButtons();});};
   var scroll=new Panel{Dock=DockStyle.Fill,AutoScroll=true};
   var layout=new TableLayoutPanel{Dock=DockStyle.Top,AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,ColumnCount=1,RowCount=9,Padding=new(20)};
-  foreach(float height in new[]{42f,54f,92f,260f,140f,110f,30f})layout.RowStyles.Add(new(SizeType.Absolute,height));
+  foreach(float height in new[]{42f,54f,92f,260f,140f,155f,30f})layout.RowStyles.Add(new(SizeType.Absolute,height));
   layout.RowStyles.Add(new(SizeType.Absolute,100));
   layout.RowStyles.Add(new(SizeType.Absolute,28));
   var title=new Label{Text="DualSense Drift Lab",Font=new("Segoe UI Semibold",22),Dock=DockStyle.Fill};layout.Controls.Add(title);
