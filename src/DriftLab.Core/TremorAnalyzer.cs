@@ -3,7 +3,8 @@ public sealed record TremorAxisReport(double Center,double Oscillation,double Pe
 public sealed record TremorReport(bool Valid,DriftKind Kind,TremorAxisReport[] Axes,int Samples)
 {
  public bool HasTremor=>Valid&&Axes.Any(a=>a.Oscillation>SignalLimits.MicroSpread+1e-10||a.Spikes>0||a.RapidChanges>0);
- public bool HasInstability=>HasTremor||Kind==DriftKind.Progressive;
+ public bool HasOffset=>Valid&&Axes.Any(a=>Math.Abs(a.Center)>SignalLimits.Center+1e-10);
+ public bool HasInstability=>HasTremor||HasOffset||Kind==DriftKind.Progressive;
  public double LeftOscillation=>Axes.Take(2).Max(a=>a.Oscillation);
  public double RightOscillation=>Axes.Skip(2).Max(a=>a.Oscillation);
  public int SpikeCount=>Axes.Sum(a=>a.Spikes);
