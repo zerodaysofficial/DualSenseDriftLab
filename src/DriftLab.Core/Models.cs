@@ -14,7 +14,6 @@ public sealed class CalibrationData
  public bool SameAs(CalibrationData other)=>values.SequenceEqual(other.values);
 }
 public enum NvStatus { Unknown,Locked,Unlocked,PendingReboot }
-// USB axes are eight-bit: adjacent codes differ by 2/255; zero lies between 127 and 128.
 public static class SignalLimits
 {
  public const double Center=2d/255+1e-6,TargetCenter=1d/255+1e-6;
