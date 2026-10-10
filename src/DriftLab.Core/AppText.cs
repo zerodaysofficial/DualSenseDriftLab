@@ -16,6 +16,17 @@ public static class AppText
  public static string Format(string italian,params object?[] arguments)=>string.Format(Culture,T(italian),arguments);
  private static readonly Dictionary<string,string> English=new(StringComparer.Ordinal)
  {
+  ["Rimuovi tremolio · Hard Detect"]="Reduce tremor · Hard Detect",
+  ["Hard Detect può salvare solo una calibrazione verificata, non installa filtri nel DualSense e non ripara sensori usurati. Vuoi procedere con l'analisi e un eventuale tentativo temporaneo?"]="Hard Detect can only save verified calibration, cannot install filters on the DualSense and cannot repair worn sensors. Continue with analysis and a possible temporary adjustment?",
+  ["Hard Detect: lascia entrambi gli stick completamente liberi per 15 secondi."]="Hard Detect: release both sticks completely for 15 seconds.",
+  ["Hard Detect: dati insufficienti o movimento rilevato. Ripeti senza toccare gli stick."]="Hard Detect: insufficient data or movement detected. Repeat without touching the sticks.",
+  ["Hard Detect: oscillazione iniziale SX {0:0.00}% / DX {1:0.00}%, picchi {2}. Ora verifico i rilasci."]="Hard Detect: initial oscillation L {0:0.00}% / R {1:0.00}%, spikes {2}. Now checking stick release.",
+  ["Hard Detect: nessuna correzione hardware giustificata dai rilasci misurati. Nessuna modifica."]="Hard Detect: the measured releases do not justify a hardware adjustment. No changes made.",
+  ["Hard Detect: ripeto la misura del tremolio per 15 secondi senza toccare gli stick."]="Hard Detect: measuring tremor again for 15 seconds. Leave the sticks untouched.",
+  ["Hard Detect: tremolio residuo rilevato. Calibrazione originale ripristinata; salvataggio disabilitato."]="Hard Detect: remaining tremor detected. Original calibration restored; saving disabled.",
+  ["Hard Detect: verifica superata. Puoi salvare la calibrazione nel controller, ma non è un filtro antitremolio."]="Hard Detect: verification passed. You can save this calibration to the controller, but it is not an anti-tremor filter.",
+  ["SX {0:0.00}% · DX {1:0.00}% · picchi {2}"]="L {0:0.00}% · R {1:0.00}% · spikes {2}",
+  ["Hard Detect (segnale USB senza filtri) · prima: {0} · dopo: {1}\n"]="Hard Detect (unfiltered USB signal) · before: {0} · after: {1}\n",
   ["Il segnale non è stabile"]="The signal is not stable",
   ["Segnale instabile durante il tentativo"]="Unstable signal during the attempt",
   ["Centro non raggiungibile entro i limiti della regolazione"]="The center cannot be reached within the adjustment limits",
