@@ -21,6 +21,14 @@ La lingua scelta si applica a pulsanti, istruzioni, risultati, messaggi del prog
 
 La prima procedura completa può durare alcuni minuti. I movimenti volontari o i campioni mancanti invalidano un ciclo. Il programma propone di ripeterlo; non applica una deadzone per far superare la prova.
 
+## Rimuovi tremolio · Hard Detect (ramo sperimentale)
+
+Questa funzione è in sviluppo sul ramo `feature/hard-detect-persistent-calibration` e **non è inclusa nella release beta 3** indicata sopra. Esegue un controllo aggiuntivo degli stick lasciati fermi per 15 secondi, il test guidato dei sei rilasci e una seconda misura di 15 secondi dopo un eventuale tentativo temporaneo di calibrazione. Mostra l'oscillazione senza filtro dei due stick e i campioni con picchi, senza alterare i dati visualizzati.
+
+Il pulsante **non può installare una deadzone o un filtro nel firmware**. Può soltanto cercare di migliorare i parametri di calibrazione disponibili sul DualSense standard. Un tentativo che non modifica i parametri, lascia tremolio o non supera tutti i controlli viene annullato: il salvataggio resta bloccato. Una verifica positiva abilita il consueto **Salva nel controller** con conferma esplicita, backup, riavvio e rilettura. Solo questa scrittura verificata rende permanente la calibrazione, che resta utilizzabile su PS5; l'efficacia sul tremolio in un gioco va comunque verificata fisicamente.
+
+Le misure temporanee non riparano l'usura meccanica né garantiscono la scomparsa di difetti intermittenti. Non sono stati effettuati test con un controller fisico o su PS5, né pubblicato un nuovo eseguibile Windows di questa funzione.
+
 ## Salva, Restore e riavvio
 
 Il test e il tentativo automatico non salvano permanentemente. **Salva nel controller** chiede una conferma separata: tieni collegati il cavo e la batteria interna durante l'operazione. La finestra non si chiude e il pulsante Annulla viene disabilitato durante la scrittura. Il successo viene dichiarato solo dopo aver osservato la scomparsa dell’interfaccia HID, la riconnessione dello stesso seriale e una rilettura identica dei parametri con memoria bloccata. Se il riavvio non è osservabile o avviene troppo rapidamente per il controllo, il salvataggio rimane non verificato.
