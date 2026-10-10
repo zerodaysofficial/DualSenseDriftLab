@@ -1,8 +1,6 @@
 using System.Threading.Channels;
 using DriftLab.Core;
 namespace DriftLab.Protocol;
-// Same acquisition/progress orchestration used by the Windows USB reader;
-// kept portable so a real six-cycle sample trace can exercise the whole loop.
 public static class SampleAcquisition
 {
  public static async Task<GuidedTestResult> GuidedAsync(ChannelReader<StickSample> reader,long generation,Action<string,double> progress,Func<string,CancellationToken,Task<bool>> confirm,CancellationToken token)
