@@ -17,7 +17,7 @@ public sealed class ControllerSession(DualSenseController controller,ControllerI
 {
  private readonly TimeProvider clock=timeProvider??TimeProvider.System;private DualSenseController device=controller;private long generation=1;private int active;private CalibrationData? target;private long verifiedAt;
  public ControllerIdentity Identity=>identity;public SessionState State{get;}=new(){Connected=true};
- public CalibrationBackup? LatestBackup{get;private set;}public GuidedTestResult? Before{get;private set;}public GuidedTestResult? After{get;private set;}
+ public CalibrationBackup? LatestBackup{get;private set;}public GuidedTestResult? Before{get;private set;}public GuidedTestResult? After{get;private set;}public TremorReport? HardBefore{get;private set;}public TremorReport? HardAfter{get;private set;}
  public event Action<SessionSnapshot>? Updated;
  private void Publish(string message,double progress=0)=>Updated?.Invoke(new(message,progress,Before,After));
  private long Begin(){if(Interlocked.CompareExchange(ref active,1,0)!=0)throw new InvalidOperationException(AppText.T("Un'operazione è già in corso"));if(!State.Connected){Interlocked.Exchange(ref active,0);throw new IOException(AppText.T("Controller non connesso"));}State.Busy=true;return generation;}
@@ -27,14 +27,25 @@ public sealed class ControllerSession(DualSenseController controller,ControllerI
  public void Invalidate(){Interlocked.Increment(ref generation);State.Invalidate();Publish(AppText.T("Controller scollegato. Risultati invalidati."));}
  private async Task Same(long g,CancellationToken ct){Guard(g);if(await device.ReadIdentityAsync(ct)!=identity)throw new IOException(AppText.T("Identità controller cambiata"));Guard(g);}
  private async Task<CalibrationData> Backup(CancellationToken ct){var original=await device.ReadCalibrationAsync(ct);var b=CalibrationBackup.Create(identity,original,"Initial");await repository.SaveAsync(b,ct);LatestBackup=b;return original;}
- public async Task RunAutoAsync(CancellationToken ct)
+ public Task RunAutoAsync(CancellationToken ct)=>RunAutoInternalAsync(ct,false);
+ public Task RunHardDetectAsync(CancellationToken ct)=>RunAutoInternalAsync(ct,true);
+ private async Task RunAutoInternalAsync(CancellationToken ct,bool hardDetect)
  {
-  long g=Begin();CalibrationData? original=null;bool changed=false;State.Verified=false;State.RestorePending=false;target=null;Before=null;After=null;
+  long g=Begin();CalibrationData? original=null;bool changed=false;State.Verified=false;State.RestorePending=false;target=null;Before=null;After=null;HardBefore=null;HardAfter=null;
   try{
+   if(hardDetect&&!await io.ConfirmAsync(AppText.T("Hard Detect può salvare solo una calibrazione verificata, non installa filtri nel DualSense e non ripara sensori usurati. Vuoi procedere con l'analisi e un eventuale tentativo temporaneo?"),ct)){Publish(AppText.T("Tentativo non eseguito. Nessuna modifica."));return;}
    await Same(g,ct);Publish(AppText.T("Creo il backup iniziale prima del test."));original=await Backup(ct);Guard(g);
+   if(hardDetect)
+   {
+    Publish(AppText.T("Hard Detect: lascia entrambi gli stick completamente liberi per 15 secondi."),.01);
+    var captured=await io.FreshAsync(TimeSpan.FromSeconds(15),ct);Guard(g);
+    HardBefore=TremorAnalyzer.Analyze(captured,TimeSpan.FromSeconds(15));
+    if(!HardBefore.Valid)throw new IOException(AppText.T("Hard Detect: dati insufficienti o movimento rilevato. Ripeti senza toccare gli stick."));
+    Publish(AppText.Format("Hard Detect: oscillazione iniziale SX {0:0.00}% / DX {1:0.00}%, picchi {2}. Ora verifico i rilasci.",HardBefore.LeftOscillation*100,HardBefore.RightOscillation*100,HardBefore.SpikeCount),.04);
+   }
    Before=await io.GuidedAsync(g,Publish,ct);Guard(g);var drift=Before.Overall;
    if(drift.Kind==DriftKind.Insufficient){Publish(AppText.T("Test non valido: campioni insufficienti."));return;}
-   if(drift.Kind==DriftKind.Normal){Publish(AppText.T("Nessun difetto rilevato nei periodi osservati. Nessuna modifica."));return;}
+   if(drift.Kind==DriftKind.Normal){Publish(hardDetect?AppText.T("Hard Detect: nessuna correzione hardware giustificata dai rilasci misurati. Nessuna modifica."):AppText.T("Nessun difetto rilevato nei periodi osservati. Nessuna modifica."));return;}
    if(drift.Kind==DriftKind.StableOffset&&Before.Rest.RightNormal&&Before.Cycles.All(r=>r.RightNormal)){Publish(AppText.T("Scostamento stabile: tentativo temporaneo del solo centro sinistro."));changed=true;var attempt=await CenterCorrector.CorrectAsync(original,drift,this,ct);Guard(g);if(!attempt.Converged){changed=false;Publish(AppText.T("Nessun miglioramento stabile. Calibrazione originale ripristinata."));return;}target=attempt.Data;}
    else{
     if(!await io.ConfirmAsync(AppText.T("Rilevato tremolio, picchi, centro instabile o un problema anche allo stick destro. La calibrazione non ripara l'usura. Vuoi provare UNA calibrazione temporanea del centro di ENTRAMBI gli stick? Lasciali entrambi liberi."),ct)){Publish(AppText.T("Tentativo non eseguito. Nessuna modifica."));return;}
@@ -42,8 +53,15 @@ public sealed class ControllerSession(DualSenseController controller,ControllerI
    }
    await Same(g,ct);Publish(AppText.T("Ripeto il test completo con gli stessi criteri."));After=await io.GuidedAsync(g,Publish,ct);Guard(g);
    var range=await io.RangeAsync(Publish,ct);Guard(g);var verification=VerificationPolicy.Evaluate(Before,After,range);
-   if(!verification.CanSave){using var recovery=new CancellationTokenSource(TimeSpan.FromSeconds(8));await device.WriteTemporaryAsync(original,recovery.Token);changed=false;target=null;var partial=Math.Abs(After.Overall.Axes[1].Median)<Math.Abs(Before.Overall.Axes[1].Median);Publish((partial?AppText.T("Miglioramento parziale"):AppText.T("Nessun miglioramento verificato"))+AppText.T(". Calibrazione originale ripristinata; salvataggio disabilitato."));return;}
-   await Same(g,ct);if(!(await device.ReadCalibrationAsync(ct)).SameAs(target!))throw new IOException(AppText.T("Calibrazione cambiata durante la verifica"));Guard(g);State.Verified=true;verifiedAt=clock.GetTimestamp();changed=false;Publish(verification.Message,1);
+   if(hardDetect)
+   {
+    Publish(AppText.T("Hard Detect: ripeto la misura del tremolio per 15 secondi senza toccare gli stick."),.92);
+    var captured=await io.FreshAsync(TimeSpan.FromSeconds(15),ct);Guard(g);
+    HardAfter=TremorAnalyzer.Analyze(captured,TimeSpan.FromSeconds(15));
+    if(!HardAfter.Valid)throw new IOException(AppText.T("Hard Detect: dati insufficienti o movimento rilevato. Ripeti senza toccare gli stick."));
+   }
+   if(!verification.CanSave||(hardDetect&&(HardAfter!.HasInstability||target!.SameAs(original!)))){using var recovery=new CancellationTokenSource(TimeSpan.FromSeconds(8));await device.WriteTemporaryAsync(original,recovery.Token);changed=false;target=null;var partial=Math.Abs(After.Overall.Axes[1].Median)<Math.Abs(Before.Overall.Axes[1].Median);Publish(hardDetect&&HardAfter!.HasInstability?AppText.T("Hard Detect: tremolio residuo rilevato. Calibrazione originale ripristinata; salvataggio disabilitato."):(partial?AppText.T("Miglioramento parziale"):AppText.T("Nessun miglioramento verificato"))+AppText.T(". Calibrazione originale ripristinata; salvataggio disabilitato."));return;}
+   await Same(g,ct);if(!(await device.ReadCalibrationAsync(ct)).SameAs(target!))throw new IOException(AppText.T("Calibrazione cambiata durante la verifica"));Guard(g);State.Verified=true;verifiedAt=clock.GetTimestamp();changed=false;Publish(hardDetect?AppText.T("Hard Detect: verifica superata. Puoi salvare la calibrazione nel controller, ma non è un filtro antitremolio."):verification.Message,1);
   }catch(Exception e){State.Verified=false;State.RestorePending=false;target=null;if(changed&&original!=null&&State.Connected){try{using var recovery=new CancellationTokenSource(TimeSpan.FromSeconds(8));await device.WriteTemporaryAsync(original,recovery.Token);Publish(AppText.T("Test interrotto. Ripristino temporaneo verificato."));}catch(Exception rollback){throw new IOException(AppText.T("Operazione fallita e ripristino NON verificato. Ricollega il controller; nessun salvataggio abilitato."),new AggregateException(e,rollback));}}throw;}
   finally{End();}
  }

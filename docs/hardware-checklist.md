@@ -13,6 +13,16 @@
 
 Non provocare intenzionalmente una perdita di alimentazione mentre si scrive la memoria permanente.
 
+Hard Detect — controlli sperimentali non ancora eseguiti
+
+- [ ] Pulsante Rimuovi tremolio / Reduce tremor attivo solo con controller USB connesso e senza altre operazioni.
+- [ ] Conferma preliminare spiega che non esiste un filtro firmware scrivibile e che l'usura può restare.
+- [ ] Prima misura di 15 secondi e seconda misura di 15 secondi con entrambi gli stick fermi; confronto di tutti e quattro gli assi con altro strumento reale.
+- [ ] Alternanza normale dei due codici centrali non scambiata per tremolio; oscillazione superiore a un passo USB, picchi e derive rilevati.
+- [ ] Nessuna scrittura permanente con parametri invariati, tremolio residuo, movimento durante l'acquisizione, disconnessione o rientro incompleto.
+- [ ] Backup e rollback provati fisicamente; salvataggio esplicito solo dopo prova completa, riavvio osservato e rilettura identica.
+- [ ] Sullo stesso DualSense verificare dopo scollegamento e riconnessione USB e con un gioco reale su PS5; non confondere persistenza dei parametri con guarigione hardware.
+
 Beta 3 — lingue e crediti
 
 - All'avvio la schermata iniziale deve essere in inglese, English preselezionato e Italiano come seconda opzione. Chiudere deve terminare senza aprire il controller.

@@ -8,8 +8,6 @@ public sealed record HidDeviceInfo(string Path,int InputLength,int FeatureLength
 }
 public static class HidDiscovery
 {
- // Presence comes from SetupAPI alone. A temporarily inaccessible HID handle
- // must never be mistaken for physical disappearance during reboot.
  public static bool IsPresent(string expectedPath)
  {
   NativeMethods.HidD_GetHidGuid(out var guid);var info=NativeMethods.SetupDiGetClassDevsW(ref guid,null,IntPtr.Zero,0x12);if(info==new IntPtr(-1))throw new System.ComponentModel.Win32Exception();

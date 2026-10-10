@@ -20,6 +20,14 @@ A native Windows application for a standard Sony DualSense connected through a U
 
 Instructions, results, app-owned errors, confirmations and Yes/No buttons use the selected language. Windows system dialogs and operating-system errors may follow the Windows language. **Made by zer0day** and the protocol attribution appear on the opening screen, in the main window and under **Credits**.
 
+## Reduce tremor · Hard Detect (experimental branch)
+
+This feature is being developed on `feature/hard-detect-persistent-calibration` and is **not included in the beta 3 release** linked above. It takes an extra unfiltered 15-second resting-stick reading, performs the six-release guided test, and captures a second 15-second reading after any temporary calibration attempt. The UI shows real left/right oscillation and spike counts.
+
+The button **cannot install an internal deadzone or firmware anti-tremor filter**. It can only attempt to improve the standard DualSense's supported calibration parameters. Any unchanged parameters, residual tremor, or failed range and guided checks cause rollback and block saving. A passing verification only enables a separate **Save to controller** with confirmation, backup, physical reboot, and calibration readback. Only this verified write makes calibration persistent for subsequent use on PS5; actual gameplay improvement still needs physical testing.
+
+This cannot repair worn sensors or guarantee the absence of intermittent faults. The experimental branch has not been compiled into a new Windows binary or tested on a physical controller or PS5.
+
 ## Save, Restore and reboot
 
 Testing and automatic adjustment do not save permanently. **Save to controller** asks for separate confirmation: keep the USB cable and internal battery connected during writing. Closing and cancellation are blocked during permanent writing. Success requires observing the old HID interface disappear, reconnecting the same serial number and reading identical calibration parameters with memory locked. A missed or very brief reboot remains unverified.

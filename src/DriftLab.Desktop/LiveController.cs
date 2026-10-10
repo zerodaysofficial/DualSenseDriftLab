@@ -22,7 +22,7 @@ public sealed class LiveController(Func<string,CancellationToken,Task<bool>> con
   try{await c.First.Task.WaitAsync(TimeSpan.FromSeconds(3),ct);return new(c.Transport);}catch{await CloseAsync();throw;}
  }
  private void Lose(Connection c){if(Interlocked.Exchange(ref c.Lost,1)!=0)return;if(ReferenceEquals(current,c)&&!Rebooting)Disconnected?.Invoke();c.Stop.Cancel();NativeClose(c);}
- private static async void NativeClose(Connection c){try{await c.Transport.DisposeAsync();}catch{/* Connection already invalid; no further feature transfer is allowed. */}}
+ private static async void NativeClose(Connection c){try{await c.Transport.DisposeAsync();}catch{}}
  private async Task Pump(Connection c)
  {
   try{await foreach(var report in c.Transport.ReadInputsAsync(c.Stop.Token)){if(!UsbInputDecoder.TryDecode(report,c.Clock.Elapsed,out var s,out var battery))throw new InvalidDataException(AppText.T("Report USB inatteso"));lock(c.Sync){c.Latest=s;c.Battery=battery;c.Seen=true;}c.First.TrySetResult();Sample?.Invoke(c,s);}}
@@ -50,8 +50,6 @@ public sealed class LiveController(Func<string,CancellationToken,Task<bool>> con
  public async Task<Reconnection> ReconnectAsync(ControllerIdentity identity,CancellationToken ct)
  {
   var old=current??throw new IOException(AppText.T("Manca la connessione precedente al riavvio"));
-  // Keeping the old handle alive avoids mistaking our own CloseAsync for a
-  // controller reset. A successful write alone is not evidence of reboot.
   while(await Task.Run(()=>HidDiscovery.IsPresent(old.Path),ct))await Task.Delay(100,ct);
   await CloseAsync();
   while(true){ct.ThrowIfCancellationRequested();foreach(var info in await Task.Run(HidDiscovery.FindDualSenseUsb,ct)){

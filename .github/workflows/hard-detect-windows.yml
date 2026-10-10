@@ -1,0 +1,34 @@
+name: Hard Detect Windows Validation
+on:
+  push:
+    branches:
+      - feature/hard-detect-persistent-calibration
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-and-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build regression tests
+        run: dotnet build tests/DriftLab.Tests -c Release -m:1
+      - name: Run regression tests
+        run: dotnet run --project tests/DriftLab.Tests -c Release --no-build
+      - name: Publish Windows app
+        run: dotnet publish src/DriftLab.Desktop -c Release -r win-x64 --self-contained true -m:1 -o dist/win-x64
+      - name: Create ZIP package
+        shell: bash
+        run: cd dist/win-x64 && zip -qr ../../DualSenseDriftLab_HardDetect_Windows.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DualSenseDriftLab_HardDetect_Windows
+          path: DualSenseDriftLab_HardDetect_Windows.zip
+          if-no-files-found: error

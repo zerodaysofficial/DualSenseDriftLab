@@ -10,8 +10,6 @@ public static class CenterCorrector
    for(int axis=0;axis<2;axis++){
     var measured=await Measure();double error=measured.Axes[axis].Median;if(Math.Abs(error)<=SignalLimits.TargetCenter)continue;
     int index=8+axis,origin=original.Values[index],lower=Math.Max(0,origin-500),upper=Math.Min(65535,origin+500);
-    // Bracket the measured center rather than extrapolating a slope from quantized codes.
-    // An unchanged code is allowed: it still shrinks the bracket on the same side.
     await Write(current.WithCenter(index,(ushort)lower));double lowerError=(await Measure()).Axes[axis].Median;
     if(Math.Abs(lowerError)<=SignalLimits.TargetCenter)continue;
     await Write(current.WithCenter(index,(ushort)upper));double upperError=(await Measure()).Axes[axis].Median;
