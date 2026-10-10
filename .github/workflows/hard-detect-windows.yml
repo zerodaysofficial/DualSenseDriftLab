@@ -8,7 +8,7 @@ on:
       - main
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
   verify-and-package:
     runs-on: ubuntu-latest
@@ -32,25 +32,3 @@ jobs:
           name: DualSenseDriftLab_HardDetect_Windows
           path: DualSenseDriftLab_HardDetect_Windows.zip
           if-no-files-found: error
-      - name: Publish beta 4 only after successful verification
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feature/hard-detect-persistent-calibration'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG=v0.1.0-beta.4
-          ASSET=DualSenseDriftLab_HardDetect_Windows.zip
-          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo "Release $TAG already exists; refusing to overwrite its assets."
-            exit 1
-          fi
-          cat > release-notes.md <<'NOTES'
-          DualSense Drift Lab - Beta 4 (experimental Hard Detect)
-
-          Adds Rimuovi tremolio / Reduce tremor · Hard Detect, unfiltered 15-second resting-stick analysis before and after a guided calibration attempt, precision diagnostics for both sticks, and an expanded post-calibration verification gate.
-
-          Restores original calibration and blocks permanent saving if checks fail, tremor persists, or calibration parameters are unchanged. Save to controller requires explicit approval and verified reboot/readback.
-
-          HARDWARE LIMITATION: This feature does not install an anti-tremor filter in the DualSense and cannot repair a worn stick. Permanent calibration parameters may persist to PS5, but actual controller and PS5 effectiveness has not been hardware-tested. Keep a backup.
-          NOTES
-          gh release create "$TAG" "$ASSET" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'DualSense Drift Lab Beta 4 - Hard Detect' --notes-file release-notes.md --prerelease
