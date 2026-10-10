@@ -33,6 +33,7 @@ public sealed class ControllerSession(DualSenseController controller,ControllerI
  {
   long g=Begin();CalibrationData? original=null;bool changed=false;State.Verified=false;State.RestorePending=false;target=null;Before=null;After=null;HardBefore=null;HardAfter=null;
   try{
+   if(hardDetect&&!await io.ConfirmAsync(AppText.T("Hard Detect può salvare solo una calibrazione verificata, non installa filtri nel DualSense e non ripara sensori usurati. Vuoi procedere con l'analisi e un eventuale tentativo temporaneo?"),ct)){Publish(AppText.T("Tentativo non eseguito. Nessuna modifica."));return;}
    await Same(g,ct);Publish(AppText.T("Creo il backup iniziale prima del test."));original=await Backup(ct);Guard(g);
    if(hardDetect)
    {
