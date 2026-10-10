@@ -1,7 +1,6 @@
 using System.Globalization;
 namespace DriftLab.Core;
 public enum AppLanguage { English,Italian }
-// All app-owned messages share this catalog. Select once, before USB work begins.
 public static class AppText
 {
  public static AppLanguage Language {get;private set;}=AppLanguage.English;
